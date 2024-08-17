@@ -57,6 +57,6 @@ export type Action =
   | { type: 'DELETE_LIST'; payload: string }
   | { type: 'ADD_ITEM'; payload: IItem }
   | { type: 'UPDATE_ITEM'; payload: IItem }
-  | { type: 'DELETE_ITEM'; payload: string }
+  | { type: 'DELETE_ITEM'; payload: { list_id: string; item_id: string } }
   | { type: 'LOAD_LISTS'; payload: IList[] };
 
