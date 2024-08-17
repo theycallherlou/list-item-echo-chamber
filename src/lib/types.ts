@@ -49,6 +49,9 @@ export interface ListProviderContext extends IListContext {
   handleAddList: (newList: IList) => Promise<void>;
   handleUpdateList: (listId: string, updatedList: IList) => Promise<void>;
   handleDeleteList: (listId: string) => Promise<void>;
+  handleAddItem: (newItem: IItem) => Promise<void>;
+  handleUpdateItem: (updatedItem: IItem) => Promise<void>;
+  handleDeleteItem: (listId: string, itemId: string) => Promise<void>;
 }
 
 export type Action =
@@ -58,5 +61,6 @@ export type Action =
   | { type: 'ADD_ITEM'; payload: IItem }
   | { type: 'UPDATE_ITEM'; payload: IItem }
   | { type: 'DELETE_ITEM'; payload: { list_id: string; item_id: string } }
-  | { type: 'LOAD_LISTS'; payload: IList[] };
+  | { type: 'LOAD_LISTS'; payload: IList[] }
+  | { type: 'LOAD_ITEMS'; payload: IItem[] };
 

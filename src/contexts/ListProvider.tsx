@@ -10,7 +10,13 @@ import {
   deleteList,
   updateList
 } from '../services/lists';
-import { IContextProps, IListContext, IList, ListProviderContext } from '../lib/types';
+import {
+  getAllItems,
+  createItem,
+  updateItem,
+  deleteItem 
+} from '../services/items';
+import { IContextProps, IListContext, IList, ListProviderContext, IItem } from '../lib/types';
 import listReducer from '../reducers/list-reducer';
 import logger from '../reducers/logger';
 
@@ -33,7 +39,6 @@ function ListProvider({ children }: IContextProps) {
           dispatch({ type: 'LOAD_LISTS', payload: response });
         } else {
           console.error('No lists found. Response was null or undefined.');
-          // Optionally dispatch an empty array to maintain consistency
           dispatch({ type: 'LOAD_LISTS', payload: [] });
         }
       } catch (error) {
@@ -41,6 +46,23 @@ function ListProvider({ children }: IContextProps) {
       }
     }
     fetchLists();
+  }, []);
+
+  useEffect(() => {
+    async function fetchItems() {
+      try {
+        const response = await getAllItems();
+        if (response) {
+          dispatch({ type: 'LOAD_ITEMS', payload: response });
+        } else {
+          console.error('No items found. Response was null or undefined.');
+          dispatch({ type: 'LOAD_ITEMS', payload: [] });
+        }
+      } catch (error) {
+        console.error(`There was an error fetching the items: ${error}`);
+      }
+    }
+    fetchItems();
   }, []);
 
   async function handleAddList(newList: IList) {
@@ -78,8 +100,40 @@ function ListProvider({ children }: IContextProps) {
     }
   }
 
+  const handleAddItem = async (newItem: IItem) => {
+    try {
+      const response = await createItem(newItem);
+      if (response) {
+        dispatch({ type: 'ADD_ITEM', payload: response });
+      }
+    } catch (error) {
+      console.error(`There was an error creating the item: ${error}`);
+    }
+  };
+
+  const handleUpdateItem = async (updatedItem: IItem) => {
+    try {
+      const response = await updateItem(updatedItem);
+      if (response) {
+        dispatch({ type: 'UPDATE_ITEM', payload: response });
+      }
+    } catch (error) {
+      console.error(`There was an error updating the item: ${error}`);
+    }
+  };
+
+  const handleDeleteItem = async (listId: string, itemId: string) => {
+    try {
+      await deleteItem(itemId);
+      dispatch({ type: 'DELETE_ITEM', payload: { list_id: listId, item_id: itemId } });
+    } catch (error) {
+      console.error(`There was an error deleting the item: ${error}`);
+    }
+  };
+
+
   return (
-    <ListContext.Provider value={{ ...state, dispatch, handleAddList, handleUpdateList, handleDeleteList }}>
+    <ListContext.Provider value={{ ...state, dispatch, handleAddList, handleUpdateList, handleDeleteList, handleAddItem, handleUpdateItem, handleDeleteItem }}>
       {children}
     </ListContext.Provider>
   );
