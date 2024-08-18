@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { IAuthContextProps, ICredentials, IUser } from '../lib/types';
+import { IContextProps, ICredentials, IUser } from '../lib/types';
 import { register, login, logout } from '../services/auth';
 
 interface AuthContextType {
@@ -11,7 +11,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-function AuthProvider({ children }: IAuthContextProps) {
+function AuthProvider({ children }: IContextProps) {
   const [user, setUser] = useState<IUser | null>(null);
 
   const registerUser = async (credentials: ICredentials) => {
