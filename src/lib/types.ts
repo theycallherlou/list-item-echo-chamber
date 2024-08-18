@@ -8,6 +8,10 @@ export interface IUser {
   email: string | undefined;
 }
 
+export interface IRedirectProps {
+  redirectPath?: string;
+}
+
 export interface IContextProps {
   children: React.ReactNode;
 }
