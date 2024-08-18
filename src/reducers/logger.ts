@@ -1,13 +1,15 @@
-import { Reducer, ReducerAction, ReducerState } from 'react';
+import { Action } from '../lib/types';
 
-function logger<S, A>(reducer: Reducer<S, A>) {
-  return (state: ReducerState<Reducer<S, A>>, action: ReducerAction<Reducer<S, A>>) => {
-    console.info(`Before: ${state}`);
-    console.info(`After: ${action}`);
+const logger = (reducer: React.Reducer<any, Action>): React.Reducer<any, Action> => {
+  return (state, action) => {
+    console.groupCollapsed(`Action: ${action.type}`);
+    console.log('%c Previous State:', 'color: #9E9E9E; font-weight: 700;', state);
+    console.log('%c Action:', 'color: #00A7F7; font-weight: 700;', action);
     const newState = reducer(state, action);
-    console.info(`New state: ${newState}`);
+    console.log('%c Next State:', 'color: #47B04B; font-weight: 700;', newState);
+    console.groupEnd();
     return newState;
-  }
-}
+  };
+};
 
-export default logger
+export default logger;

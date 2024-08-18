@@ -21,22 +21,23 @@ export interface IItem {
 }
 
 export interface IList {
-  id: string;
+  id?: string;
   list_name: string;
-  user_id: string;
+  user_id?: string;
   items: IItem[];
 }
 
 export interface State {
   lists: IList[];
+  handleCreateList: (newList: Omit<IList, 'id' | 'user_id'>) => Promise<void>;
 }
 
 export type Action =
   | { type: 'LOAD_LISTS'; payload: IList[] }
-  | { type: 'ADD_LIST'; payload: IList }
+  | { type: 'CREATE_LIST'; payload: IList }
   | { type: 'UPDATE_LIST'; payload: IList }
   | { type: 'DELETE_LIST'; payload: string }
-  | { type: 'ADD_ITEM'; payload: IItem }
+  | { type: 'CREATE_ITEM'; payload: IItem }
   | { type: 'UPDATE_ITEM'; payload: IItem }
   | { type: 'DELETE_ITEM'; payload: { listId: string; itemId: string } };
 

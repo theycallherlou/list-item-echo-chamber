@@ -1,19 +1,19 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { createContext, useContext, useReducer, useEffect } from 'react';
 import listReducer from '../reducers/list-reducer';
-import { State, IList, Action, IContextProps } from '../lib/types';
+import { State, IList, IContextProps } from '../lib/types';
 import { loadLists } from '../services/lists';
+import { createList } from '../services/lists';
+import logger from '../reducers/logger';
 
 const initialState: State = {
   lists: [],
+  handleCreateList: async () => {}
 };
 
-const ListContext = createContext<{
-  state: State;
-  dispatch: React.Dispatch<Action>;
-} | undefined>(undefined);
+const ListContext = createContext<State | undefined>(undefined);
 
 function ListProvider({ children }: IContextProps) {
-  const [state, dispatch] = useReducer(listReducer, initialState);
+  const [state, dispatch] = useReducer(logger(listReducer), initialState);
 
   useEffect(() => {
     async function fetchLists() {
@@ -24,8 +24,16 @@ function ListProvider({ children }: IContextProps) {
     fetchLists();
   }, []);
 
+  async function handleCreateList(newList: Omit<IList, 'id' | 'user_id'>) {
+   const createdList = await createList(newList);
+   if (createdList) {
+    dispatch({ type: 'CREATE_LIST', payload: createdList });
+   }
+
+  }
+
   return (
-    <ListContext.Provider value={{ state, dispatch }}>
+    <ListContext.Provider value={{ ...state, handleCreateList }}>
       {children}
     </ListContext.Provider>
   );

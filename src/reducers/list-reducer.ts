@@ -5,7 +5,7 @@ function listReducer(state: State, action: Action): State {
     case 'LOAD_LISTS':
       return { ...state, lists: action.payload };
       
-    case 'ADD_LIST':
+    case 'CREATE_LIST':
       return { ...state, lists: [...state.lists, action.payload] };
       
     case 'UPDATE_LIST':
@@ -22,7 +22,7 @@ function listReducer(state: State, action: Action): State {
         lists: state.lists.filter(list => list.id !== action.payload),
       };
       
-    case 'ADD_ITEM':
+    case 'CREATE_ITEM':
       return {
         ...state,
         lists: state.lists.map(list =>
