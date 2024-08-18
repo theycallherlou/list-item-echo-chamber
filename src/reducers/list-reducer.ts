@@ -1,5 +1,3 @@
-// src/reducers/listReducer.ts
-
 import { State, Action } from '../lib/types';
 
 function listReducer(state: State, action: Action): State {
