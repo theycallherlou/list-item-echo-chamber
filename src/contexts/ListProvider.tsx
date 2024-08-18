@@ -34,7 +34,9 @@ function ListProvider({ children }: IContextProps) {
   }
 
   async function handleCreateItem(newItem: Omit<IItem, 'id'>) {
+    console.log('sending item to service function', newItem);
     const createdItem = await createItem(newItem);
+    console.log('created item response', createdItem);
     if (createdItem) {
       dispatch({ type: 'CREATE_ITEM', payload: createdItem });
     }

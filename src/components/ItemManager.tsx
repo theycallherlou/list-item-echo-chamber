@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { useList } from '../contexts/ListProvider';
 import { IItem } from '../lib/types';
 import { IItemManagerProps} from '../lib/types';
@@ -8,14 +8,15 @@ export default function ItemManager({ listId }: IItemManagerProps) {
   const [itemName, setItemName] = useState('');
   const [quantity, setQuantity] = useState(0);
 
-  function createNewItem() {
+  function createNewItem(e: FormEvent) {
+    e.preventDefault();
     const newItem: Omit<IItem, 'id'> = {
       list_id: listId,
       item_name: itemName,
       quantity: quantity,
       completed: false,
     };
-
+    console.info('Creating new item:', newItem);
     handleCreateItem(newItem);
     setItemName('');
     setQuantity(0);
