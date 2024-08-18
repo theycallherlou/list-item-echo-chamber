@@ -1,4 +1,4 @@
-import ListManager from './ListManagement';
+import ListManager from './ListManager';
 import ListDisplay from './ListDisplay';
 
 export default function Home() {

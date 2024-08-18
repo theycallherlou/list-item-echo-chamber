@@ -1,4 +1,5 @@
 import { useList } from '../contexts/ListProvider';
+import ItemManager from './ItemManager';
 
 export default function ListDisplay() {
   const { lists } = useList();
@@ -13,6 +14,7 @@ export default function ListDisplay() {
       {lists.map((list) => (
         <div key={list.id}>
           <h3>{list.list_name}</h3>
+          <ItemManager listId={list.id!} />
           <ul>
             {list.items.length > 0 ? (
               list.items.map((item) => (

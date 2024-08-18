@@ -1,13 +1,15 @@
 import { createContext, useContext, useReducer, useEffect } from 'react';
 import listReducer from '../reducers/list-reducer';
-import { State, IList, IContextProps } from '../lib/types';
+import { State, IList, IContextProps, IItem } from '../lib/types';
 import { loadLists } from '../services/lists';
 import { createList } from '../services/lists';
 import logger from '../reducers/logger';
+import { createItem } from '../services/items';
 
 const initialState: State = {
   lists: [],
-  handleCreateList: async () => {}
+  handleCreateList: async () => {},
+  handleCreateItem: async () => {},
 };
 
 const ListContext = createContext<State | undefined>(undefined);
@@ -29,11 +31,17 @@ function ListProvider({ children }: IContextProps) {
    if (createdList) {
     dispatch({ type: 'CREATE_LIST', payload: createdList });
    }
+  }
 
+  async function handleCreateItem(newItem: Omit<IItem, 'id'>) {
+    const createdItem = await createItem(newItem);
+    if (createdItem) {
+      dispatch({ type: 'CREATE_ITEM', payload: createdItem });
+    }
   }
 
   return (
-    <ListContext.Provider value={{ ...state, handleCreateList }}>
+    <ListContext.Provider value={{ ...state, handleCreateList, handleCreateItem }}>
       {children}
     </ListContext.Provider>
   );

@@ -20,6 +20,11 @@ export interface IItem {
   completed: boolean;
 }
 
+
+export interface IItemManagerProps {
+  listId: string;
+}
+
 export interface IList {
   id?: string;
   list_name: string;
@@ -30,6 +35,7 @@ export interface IList {
 export interface State {
   lists: IList[];
   handleCreateList: (newList: Omit<IList, 'id' | 'user_id'>) => Promise<void>;
+  handleCreateItem: (newItem: Omit<IItem, 'id'>) => Promise<void>;
 }
 
 export type Action =
@@ -40,5 +46,3 @@ export type Action =
   | { type: 'CREATE_ITEM'; payload: IItem }
   | { type: 'UPDATE_ITEM'; payload: IItem }
   | { type: 'DELETE_ITEM'; payload: { listId: string; itemId: string } };
-
-
