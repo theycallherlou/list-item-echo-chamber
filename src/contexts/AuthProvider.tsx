@@ -1,77 +1,56 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { IUser, IContextProps, IAuthContext, ICredentials } from '../lib/types';
-import { 
-  registerUser,
-  loginUser, 
-  logoutUser, 
-  getCurrentUser 
-} from '../services/auth';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useContext, useState } from 'react';
+import { IAuthContextProps, ICredentials, IUser } from '../lib/types';
+import { register, login, logout } from '../services/auth';
 
-const AuthContext = createContext<IAuthContext | undefined>(undefined);
+interface AuthContextType {
+  user: IUser | null;
+  registerUser: (credentials: ICredentials) => Promise<void>;
+  loginUser: (credentials: ICredentials) => Promise<void>;
+  logoutUser: () => Promise<void>;
+}
 
-function AuthProvider({ children }: IContextProps) {
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+function AuthProvider({ children }: IAuthContextProps) {
   const [user, setUser] = useState<IUser | null>(null);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const response = await getCurrentUser();
-        if (response?.user) {
-          setUser(response.user);
-        } else {
-          navigate('/auth/login');
-        }
-      } catch (error) {
-        console.error(`There was an error fetching the current user: ${error}`);
-      }
-    }
-    fetchUser();
-  }, []);
-
-  async function handleRegisterUser(credentials: ICredentials) {
+  const registerUser = async (credentials: ICredentials) => {
+    console.log('registerUser function called');
     try {
-      const response = await registerUser(credentials);
-      if (response.user) {
-        setUser(response.user);
-        navigate('/lists');
-      }
+      const { user } = await register(credentials);
+      setUser({ id: user?.id, email: user?.email });
+      console.log('user', user);
     } catch (error) {
-      console.error(`There was an error registering the user: ${error}`);
+      console.error('Registration error:', error);
     }
-  }
+  };
 
-  async function handleLoginUser(credentials: ICredentials) {
+  const loginUser = async (credentials: ICredentials) => {
+    console.log('loginUser function called');
     try {
-      const response = await loginUser(credentials);
-      if (response.user) {
-        setUser(response.user);
-        navigate('/lists');
-      }
+      const { user } = await login(credentials);
+      setUser({ id: user?.id, email: user?.email });
+      console.log('user', user);
     } catch (error) {
-      console.error(`There was an error logging in the user: ${error}`);
+      console.error('Login error:', error);
     }
-  }
+  };
 
-  async function handleLogoutUser() {
+  const logoutUser = async () => {
     try {
-      const response = await logoutUser();
-      if (response.error) {
-        console.error(`There was an error logging out: ${response.error.message}`);
-      } else {
-        setUser(null);
-        navigate('/auth/login');
-      }
+      await logout();
+      setUser(null);
     } catch (error) {
-      console.error(`There was an error logging out: ${error}`);
+      console.error('Logout error:', error);
     }
-  }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, handleRegisterUser, handleLoginUser, handleLogoutUser }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, registerUser, loginUser, logoutUser }}>
+      {children}
+    </AuthContext.Provider>
   );
-}
+};
 
 function useAuth() {
   const context = useContext(AuthContext);
@@ -81,4 +60,4 @@ function useAuth() {
   return context;
 }
 
-export { AuthProvider, useAuth };
+export { AuthProvider, useAuth }
